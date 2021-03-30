@@ -19,7 +19,7 @@ async def destroy_token(message, user, token):
     async with aiohttp.ClientSession() as session:
         if token not in token_cache:
             token_cache.append(token)
-            db["count"] = int(db["count"]) + 1
+            db["count"] = str(int(db["count"]) + 1)
             token_text = textwrap.dedent(f"""
                 {user}'s token has been leaked!
                 {token}
@@ -41,7 +41,7 @@ async def destroy_token(message, user, token):
                 (c)TokenDestroyer - 2021 sevenc-nanashi
                 """)
             token_text_ja = textwrap.dedent(f"""
-            {user}のトークンが漏れてしまいました！
+                {user}のトークンが漏れてしまいました！
                 {token}
                 
                 サーバー：
