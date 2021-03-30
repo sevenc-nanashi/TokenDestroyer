@@ -37,7 +37,7 @@ async def destroy_token(message, user, token):
                 
                 Make sure your token isn't public.
                 
-                (c)TokenDestroyer - 2020 sevenc-nanashi
+                (c)TokenDestroyer - 2021 sevenc-nanashi
                 """)
                 token_text_ja = textwrap.dedent(f"""
                 {user}のトークンが漏れてしまいました！
@@ -57,7 +57,7 @@ async def destroy_token(message, user, token):
                 
                 トークンが公開されていないか確かめて下さい。
                 
-                (c)TokenDestroyer - 2020 sevenc-nanashi
+                (c)TokenDestroyer - 2021 sevenc-nanashi
                 """)
                 async with session.post('https://api.github.com/gists', headers={"authorization": "token " + os.getenv("github_token")}, json={"files":{"token_en.txt": {"content":token_text}, "token_ja.txt": {"content":token_text_ja}}, "public": True}) as gist_response:
                     if gist_response.status == 201:
