@@ -10,16 +10,17 @@ from replit import db
 
 client = discord.Client()
 TOKEN_PATTERN = re.compile(r"([0-9a-zA-Z\-_]{24})\.[0-9a-zA-Z\-_]{6}\.[0-9a-zA-Z\-_]{27}")
+token_cache = []
 
 async def update_status():
     await client.change_presence(activity=discord.Game("Destroyed " + db["count"] + " Tokens"))
 
 async def destroy_token(message, user, token):
     async with aiohttp.ClientSession() as session:
-        async with session.get("https://discord.com/api/v8/users/@me", headers={"authorization": "Bot " + token}) as response:
-            if response.status == 200:
-                db["count"] = int(db["count"]) + 1
-                token_text = textwrap.dedent(f"""
+        if token not in token_cache:
+            token_cache.append(token)
+            db["count"] = int(db["count"]) + 1
+            token_text = textwrap.dedent(f"""
                 {user}'s token has been leaked!
                 {token}
                 
@@ -39,8 +40,8 @@ async def destroy_token(message, user, token):
                 
                 (c)TokenDestroyer - 2021 sevenc-nanashi
                 """)
-                token_text_ja = textwrap.dedent(f"""
-                {user}のトークンが漏れてしまいました！
+            token_text_ja = textwrap.dedent(f"""
+            {user}のトークンが漏れてしまいました！
                 {token}
                 
                 サーバー：
@@ -59,10 +60,11 @@ async def destroy_token(message, user, token):
                 
                 (c)TokenDestroyer - 2021 sevenc-nanashi
                 """)
-                async with session.post('https://api.github.com/gists', headers={"authorization": "token " + os.getenv("github_token")}, json={"files":{"token_en.txt": {"content":token_text}, "token_ja.txt": {"content":token_text_ja}}, "public": True}) as gist_response:
-                    if gist_response.status == 201:
-                        await message.reply(f"**{user}'s token has been leaked!**\nToken has been disabled because we've uploaded token to gist, but please don't leak token more!\n\n**{user}のトークン漏れを検知しました！**\nGistにアップロードしたためトークンは無効化されましたが、公開しないように気をつけて下さい！")
-                        await update_status()
+            async with session.post('https://api.github.com/gists', headers={"authorization": "token " + os.getenv("github_token")}, json={"files":{"token_en.txt": {"content":token_text}, "token_ja.txt": {"content":token_text_ja}}, "public": True}) as gist_response:
+                if gist_response.status == 201:
+                    await message.reply(f"**{user}'s token has been leaked!**\nToken has been disabled because we've uploaded token to gist, but please don't leak token more!\n\n**{user}のトークン漏れを検知しました！**\nGistにアップロードしたためトークンは無効化されましたが、公開しないように気をつけて下さい！")
+                    await update_status()
+
 @client.event
 async def on_ready():
     print("Ready!")
