@@ -9,7 +9,7 @@ import discord
 from replit import db
 
 
-client = discord.Client(allowed_mentions=discord.AllowedMentions(everyone=False, role=False))
+client = discord.Client(allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, replied_user=False))
 TOKEN_PATTERN = re.compile(r"([0-9a-zA-Z\-_]{24})\.[0-9a-zA-Z\-_]{6,7}\.[0-9a-zA-Z\-_]{27}")
 token_cache = []
 
