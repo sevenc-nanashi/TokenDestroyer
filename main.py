@@ -107,8 +107,8 @@ async def check_ping(message):
         このBotはトークンを見つけ次第Gistに上げて無効化するBotです。
         This bot will upload token that this bot find to gist and destroy it.
         Created by 名無し。
-        https://discord.com/api/oauth2/authorize?client_id=826377540398612492&permissions=3072&scope=bot
-        GitHub: https://github.com/sevenc-nanashi/TokenDestroyer
+        <https://discord.com/api/oauth2/authorize?client_id=826377540398612492&permissions=3072&scope=bot>
+        GitHub: <https://github.com/sevenc-nanashi/TokenDestroyer>
         """))
 
 @client.event
