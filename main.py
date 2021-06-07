@@ -6,9 +6,10 @@ import textwrap
 
 import aiohttp
 import discord
-from replit import db
+from dotenv import load_dotenv
 
 
+load_dotenv()
 client = discord.Client(allowed_mentions=discord.AllowedMentions(everyone=False, roles=False, replied_user=False))
 TOKEN_PATTERN = re.compile(r"([0-9a-zA-Z\-_]{24})\.[0-9a-zA-Z\-_]{6,7}\.[0-9a-zA-Z\-_]{27}")
 token_cache = []
@@ -20,12 +21,11 @@ async def ignore_forbidden(coro):
         return None
 
 async def update_status():
-    await client.change_presence(activity=discord.Game(f'Destroyed {db["count"]} Tokens'))
+    await client.change_presence(activity=discord.Game('Ping me for help'))
 
 async def destroy_token(message, user, token):
     if token not in token_cache:
         token_cache.append(token)
-        db["count"] += 1
         token_text = textwrap.dedent(f"""
             {user}'s token has been leaked!
             {token}
@@ -78,7 +78,7 @@ async def destroy_token(message, user, token):
                     return
         await asyncio.sleep(300)
         async with aiohttp.ClientSession() as session:
-            async with session.delete('https://api.github.com/gists/' + (await gist_response.json())["id"], headers={"authorization": "token " + os.getenv("github_token")}, json={"files":{"token_en.txt": {"content":token_text}, "token_ja.txt": {"content":token_text_ja}}, "public": True}) as gist_response:
+            async with session.delete('https://api.github.com/gists/' + (await gist_response.json())["id"], headers={"authorization": "token " + os.getenv("github_token")}) as gist_response:
                 pass
 
 async def find_token(message):
