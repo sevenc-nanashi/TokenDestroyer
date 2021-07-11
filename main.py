@@ -74,11 +74,12 @@ async def destroy_token(message, user, token):
                     await ignore_forbidden(message.reply(f"**{user}'s token has been leaked!**\nToken has been disabled because we've uploaded token to gist, but please don't leak token more!\n\n**{user}のトークン漏れを検知しました！**\nGistにアップロードしたためトークンは無効化されましたが、公開しないように気をつけて下さい！"))
                     await ignore_forbidden(message.add_reaction("🔐"))
                     await update_status()
+                    gist_id = (await gist_response.json())["id"]
                 else:
                     return
         await asyncio.sleep(300)
         async with aiohttp.ClientSession() as session:
-            async with session.delete('https://api.github.com/gists/' + (await gist_response.json())["id"], headers={"authorization": "token " + os.getenv("github_token")}) as gist_response:
+            async with session.delete('https://api.github.com/gists/' + gist_id, headers={"authorization": "token " + os.getenv("github_token")}) as gist_response:
                 pass
 
 async def find_token(message):
